@@ -244,9 +244,6 @@
     <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="lib\jquery-validate\jquery.validate.js" />
     <Content Include="lib\jquery-validate\jquery.validate.min.js" />
-    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-    <Content Include="lib\jquery\jquery.min.map" />
     <Content Include="lib\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="lib\bootstrap\dist\css\bootstrap-theme.min.css" />
     <Content Include="lib\bootstrap\dist\css\bootstrap.css" />
@@ -254,6 +251,8 @@
     <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="lib\bootstrap\dist\js\bootstrap.js" />
     <Content Include="lib\bootstrap\dist\js\bootstrap.min.js" />
+    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
     <Content Include="lib\jquery\jquery.js" />
     <Content Include="lib\jquery\jquery.min.js" />
     <Content Include="lib\modernizr\modernizr.js" />
@@ -284,6 +283,7 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\jquery\jquery.min.map" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\stickersdeploytest1-config - Web Deploy.pubxml" />
   </ItemGroup>

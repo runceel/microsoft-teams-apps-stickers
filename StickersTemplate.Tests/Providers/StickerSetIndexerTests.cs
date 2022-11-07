@@ -33,7 +33,7 @@ namespace StickersTemplate.Tests.Providers
         public async Task IndexStickerSetAsync_NullStickerSet()
         {
             // Setup
-            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger>().Object);
+            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger<StickerSetIndexer>>().Object);
 
             // Action
             await stickerSetIndexer.IndexStickerSetAsync(null);
@@ -43,7 +43,7 @@ namespace StickersTemplate.Tests.Providers
         public async Task Index_and_Find_EmptyStickerSet()
         {
             // Setup
-            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger>().Object);
+            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger<StickerSetIndexer>>().Object);
             var stickers = new StickerSet("Default stickers", Enumerable.Empty<Sticker>());
 
             // Action
@@ -59,7 +59,7 @@ namespace StickersTemplate.Tests.Providers
         public async Task Index_and_Find_TwoStickers_SameKeyword()
         {
             // Setup
-            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger>().Object);
+            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger<StickerSetIndexer>>().Object);
             var stickers = new StickerSet("Default stickers", new Sticker[] {
                 new Sticker("sticker 1", new Uri("https://microsoft.com"), new string[] { "key" }),
                 new Sticker("sticker 2", new Uri("https://microsoft.com"), new string[] { "key" })
@@ -86,7 +86,7 @@ namespace StickersTemplate.Tests.Providers
         public async Task Index_and_Find_TwoStickers_DifferentKeyword()
         {
             // Setup
-            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger>().Object);
+            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger<StickerSetIndexer>>().Object);
             var stickers = new StickerSet("Default stickers", new Sticker[] {
                 new Sticker("sticker 1", new Uri("https://microsoft.com"), new string[] { "key1" }),
                 new Sticker("sticker 2", new Uri("https://microsoft.com"), new string[] { "key2" })
@@ -125,7 +125,7 @@ namespace StickersTemplate.Tests.Providers
         public async Task Index_and_Find_TwoStickers_Pagination()
         {
             // Setup
-            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger>().Object);
+            var stickerSetIndexer = new StickerSetIndexer(new Mock<ILogger<StickerSetIndexer>>().Object);
             var stickers = new StickerSet("Default stickers", new Sticker[] {
                 new Sticker("sticker 1", new Uri("https://microsoft.com"), new string[] { "key1" }),
                 new Sticker("sticker 2", new Uri("https://microsoft.com"), new string[] { "key2" })

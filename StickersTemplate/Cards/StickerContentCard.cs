@@ -35,7 +35,7 @@ namespace StickersTemplate.Cards
         /// <returns>An <see cref="Attachment"/>.</returns>
         public Attachment ToAttachment()
         {
-            var card = new AdaptiveCard
+            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Speak = this.sticker.Name,
                 Body = new List<AdaptiveElement>()

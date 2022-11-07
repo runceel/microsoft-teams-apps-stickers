@@ -47,15 +47,6 @@
         "jquery.validate.min.js",
         "jquery.validate.js"
       ]
-    },
-    {
-      "provider": "cdnjs",
-      "library": "modernizr@2.8.3",
-      "destination": "lib/modernizr/",
-      "files": [
-        "modernizr.min.js",
-        "modernizr.js"
-      ]
     }
   ]
 }

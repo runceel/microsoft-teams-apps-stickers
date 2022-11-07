@@ -255,8 +255,6 @@
     <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
     <Content Include="lib\jquery\jquery.js" />
     <Content Include="lib\jquery\jquery.min.js" />
-    <Content Include="lib\modernizr\modernizr.js" />
-    <Content Include="lib\modernizr\modernizr.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -320,6 +318,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties libman_1json__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

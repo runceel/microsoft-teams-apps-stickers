@@ -54,9 +54,9 @@ namespace StickersTemplate
         [ExcludeFromCodeCoverage]
         public MessagesHttpFunction(
             TelemetryConfiguration telemetryConfiguration,
-            ISettings settings = null,
-            IStickerSetRepository stickerSetRepository = null,
-            IStickerSetIndexer stickerSetIndexer = null,
+            ISettings settings,
+            IStickerSetRepository stickerSetRepository,
+            IStickerSetIndexer stickerSetIndexer,
             ICredentialProvider credentialProvider = null,
             IChannelProvider channelProvider = null)
         {
@@ -101,9 +101,6 @@ namespace StickersTemplate
                 logger.LogInformation("Messages function received a request.");
 
                 // Use the configured service for tests or create ones to use.
-                ISettings settings = this.settings ?? new Settings(logger, context);
-                IStickerSetRepository stickerSetRepository = this.stickerSetRepository ?? new StickerSetRepository(logger, settings);
-                IStickerSetIndexer stickerSetIndexer = this.stickerSetIndexer ?? new StickerSetIndexer(logger);
                 ICredentialProvider credentialProvider = this.credentialProvider ?? new SimpleCredentialProvider(settings.MicrosoftAppId, null);
                 IChannelProvider channelProvider = this.channelProvider ?? new SimpleChannelProvider();
 

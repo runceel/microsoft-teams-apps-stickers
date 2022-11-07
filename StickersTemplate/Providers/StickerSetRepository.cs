@@ -32,7 +32,7 @@ namespace StickersTemplate.Providers
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/>.</param>
         /// <param name="settings">The <see cref="ISettings"/>.</param>
-        public StickerSetRepository(ILogger logger, ISettings settings)
+        public StickerSetRepository(ILogger<StickerSetRepository> logger, ISettings settings)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));

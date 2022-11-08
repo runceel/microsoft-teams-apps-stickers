@@ -17,18 +17,18 @@ namespace StickersTemplate.Providers.Serialization
         /// Gets or sets the name.
         /// </summary>
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the image uri.
         /// </summary>
         [JsonProperty("imageUri")]
-        public string ImageUri { get; set; }
+        public string? ImageUri { get; set; }
 
         /// <summary>
         /// Gets or sets the keywords.
         /// </summary>
         [JsonProperty("keywords")]
-        public string[] Keywords { get; set; }
+        public string[]? Keywords { get; set; }
     }
 }

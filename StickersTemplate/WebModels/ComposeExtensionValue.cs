@@ -17,18 +17,18 @@ namespace StickersTemplate.WebModels
         /// Gets or sets the command Id of the value.
         /// </summary>
         [JsonProperty("commandId")]
-        public string CommandId { get; set; }
+        public string? CommandId { get; set; }
 
         /// <summary>
         /// Gets or sets the parameters of the value.
         /// </summary>
         [JsonProperty("parameters")]
-        public ComposeExtensionParameter[] Parameters { get; set; }
+        public ComposeExtensionParameter[]? Parameters { get; set; }
 
         /// <summary>
         /// Gets or sets the query options of the value.
         /// </summary>
         [JsonProperty("queryOptions")]
-        public ComposeExtensionQueryOptions QueryOptions { get; set; }
+        public ComposeExtensionQueryOptions? QueryOptions { get; set; }
     }
 }

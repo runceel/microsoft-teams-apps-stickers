@@ -54,7 +54,7 @@ namespace StickersTemplate.Extensions
             /// Gets or sets the preview <see cref="Attachment"/>.
             /// </summary>
             [JsonProperty("preview")]
-            public Attachment Preview { get; set; }
+            public Attachment? Preview { get; set; }
         }
     }
 }

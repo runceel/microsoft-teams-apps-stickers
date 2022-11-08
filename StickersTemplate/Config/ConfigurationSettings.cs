@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using StickersTemplate.Interfaces;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StickersTemplate.Config;
 internal class ConfigurationSettings : ISettings
@@ -10,7 +11,7 @@ internal class ConfigurationSettings : ISettings
     private readonly IConfiguration _configuration;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Settings"/> class.
+    /// Initializes a new instance of the <see cref="ConfigurationSettings"/> class.
     /// </summary>
     public ConfigurationSettings(IConfiguration configuration, ILogger<ConfigurationSettings> logger)
     {
@@ -19,10 +20,10 @@ internal class ConfigurationSettings : ISettings
     }
 
     /// <inheritdoc/>
-    public string MicrosoftAppId => StringValue("MicrosoftAppId");
+    public string MicrosoftAppId => StringValue("MicrosoftAppId") ?? throw new InvalidOperationException("MicrosoftAppId is required.");
 
     /// <inheritdoc/>
-    public Uri ConfigUri => UriValue("ConfigUri");
+    public Uri ConfigUri => UriValue("ConfigUri") ?? throw new InvalidOperationException("MicrosoftAppId is required.");
 
     /// <summary>
     /// Parses a config value into a <see cref="string"/>.
@@ -30,7 +31,7 @@ internal class ConfigurationSettings : ISettings
     /// <param name="configName">The name of the config value.</param>
     /// <param name="optional">Whether this parameter is optional or not.</param>
     /// <returns>A parsed <see cref="string"/>.</returns>
-    private string StringValue(string configName, bool optional = false)
+    private string? StringValue(string configName, bool optional = false)
     {
         var value = _configuration[configName];
         if (value == null)
@@ -55,7 +56,7 @@ internal class ConfigurationSettings : ISettings
     /// <param name="configName">The name of the config value.</param>
     /// <param name="optional">Whether this parameter is optional or not.</param>
     /// <returns>A parsed <see cref="Uri"/>.</returns>
-    private Uri UriValue(string configName, bool optional = false)
+    private Uri? UriValue(string configName, bool optional = false)
     {
         var value = _configuration[configName];
         if (!Uri.TryCreate(value, UriKind.Absolute, out var uri))

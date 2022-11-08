@@ -17,6 +17,6 @@ namespace StickersTemplate.Providers.Serialization
         /// Gets or sets the images in this app.
         /// </summary>
         [JsonProperty("images")]
-        public StickerDTO[] Images { get; set; }
+        public StickerDTO[]? Images { get; set; }
     }
 }

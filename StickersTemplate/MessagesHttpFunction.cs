@@ -48,16 +48,11 @@ public class MessagesHttpFunction
     /// <param name="botFrameworkAuthentication">The <see cref="BotFrameworkAuthentication"/>.</param>
     [ExcludeFromCodeCoverage]
     public MessagesHttpFunction(
-        TelemetryConfiguration telemetryConfiguration,
+        TelemetryConfiguration? telemetryConfiguration,
         IStickerSetRepository stickerSetRepository,
         IStickerSetIndexer stickerSetIndexer,
         BotFrameworkAuthentication botFrameworkAuthentication)
     {
-        if (telemetryConfiguration is null)
-        {
-            throw new ArgumentNullException(nameof(telemetryConfiguration));
-        }
-
         _telemetryClient = new TelemetryClient(telemetryConfiguration);
         _stickerSetRepository = stickerSetRepository ?? throw new ArgumentNullException(nameof(stickerSetRepository));
         _stickerSetIndexer = stickerSetIndexer ?? throw new ArgumentNullException(nameof(stickerSetIndexer));

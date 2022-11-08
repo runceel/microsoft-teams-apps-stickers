@@ -19,7 +19,7 @@ namespace StickersTemplate.Extensions
         /// </summary>
         /// <param name="composeExtensionValue">The Compose Extension query value.</param>
         /// <returns>The parameter value if one was present. Null otherwise.</returns>
-        public static string GetParameterValue(this ComposeExtensionValue composeExtensionValue)
+        public static string? GetParameterValue(this ComposeExtensionValue composeExtensionValue)
         {
             if (composeExtensionValue?.Parameters?.Any(p => p != null && !"initialRun".Equals(p.Name)) ?? false)
             {

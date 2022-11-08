@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -66,13 +67,12 @@ public class MessagesHttpFunction
     /// </summary>
     /// <param name="req">The <see cref="HttpRequest"/>.</param>
     /// <param name="logger">The <see cref="ILogger"/>.</param>
-    /// <param name="context">The <see cref="ExecutionContext"/>.</param>
     /// <returns>A <see cref="Task"/> that results in an <see cref="IActionResult"/> when awaited.</returns>
     [FunctionName("messages")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
         ILogger logger,
-        ExecutionContext context)
+        CancellationToken cancellationToken)
     {
         if (logger == null)
         {
@@ -99,7 +99,7 @@ public class MessagesHttpFunction
             {
                 var authorizationHeader = GetAuthorizationHeader(req);
                 activity = await ParseRequestBody(req);
-                await _botFrameworkAuthentication.AuthenticateRequestAsync(activity, authorizationHeader, default);
+                await _botFrameworkAuthentication.AuthenticateRequestAsync(activity, authorizationHeader, cancellationToken);
             }
             catch (JsonReaderException e)
             {

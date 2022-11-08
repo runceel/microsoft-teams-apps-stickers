@@ -17,6 +17,6 @@ namespace StickersTemplate.WebModels
         /// Gets or sets the result of the response.
         /// </summary>
         [JsonProperty("composeExtension")]
-        public ComposeExtensionResult ComposeExtensionResult { get; set; }
+        public ComposeExtensionResult? ComposeExtensionResult { get; set; }
     }
 }

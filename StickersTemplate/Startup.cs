@@ -11,13 +11,19 @@ using StickersTemplate.Providers;
 
 namespace StickersTemplate;
 
+/// <summary>
+/// Startup class for Function App
+/// </summary>
 public class Startup : FunctionsStartup
 {
+    /// <summary>
+    /// Configure services
+    /// </summary>
+    /// <param name="builder">The <see cref="IFunctionsHostBuilder"/></param>
     public override void Configure(IFunctionsHostBuilder builder)
     {
-        builder.Services.AddSingleton<ISettings, ConfigurationSettings>();
         builder.Services.AddTransient<IStickerSetRepository, StickerSetRepository>();
-        builder.Services.AddTransient<IStickerSetIndexer, StickerSetIndexer>();
+        builder.Services.AddHttpClient<IStickerSetIndexer, StickerSetIndexer>();
         builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
     }
 }

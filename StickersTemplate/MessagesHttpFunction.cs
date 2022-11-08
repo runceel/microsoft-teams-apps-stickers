@@ -35,7 +35,6 @@ namespace StickersTemplate;
 public class MessagesHttpFunction
 {
     private readonly TelemetryClient _telemetryClient;
-    private readonly ISettings _settings;
     private readonly IStickerSetRepository _stickerSetRepository;
     private readonly IStickerSetIndexer _stickerSetIndexer;
     private readonly BotFrameworkAuthentication _botFrameworkAuthentication;
@@ -44,22 +43,25 @@ public class MessagesHttpFunction
     /// Initializes a new instance of the <see cref="MessagesHttpFunction"/> class.
     /// </summary>
     /// <param name="telemetryConfiguration">The telemetry configuration</param>
-    /// <param name="settings">The <see cref="ISettings"/>.</param>
     /// <param name="stickerSetRepository">The <see cref="IStickerSetRepository"/>.</param>
     /// <param name="stickerSetIndexer">The <see cref="IStickerSetIndexer"/>.</param>
+    /// <param name="botFrameworkAuthentication">The <see cref="BotFrameworkAuthentication"/>.</param>
     [ExcludeFromCodeCoverage]
     public MessagesHttpFunction(
         TelemetryConfiguration telemetryConfiguration,
-        ISettings settings,
         IStickerSetRepository stickerSetRepository,
         IStickerSetIndexer stickerSetIndexer,
         BotFrameworkAuthentication botFrameworkAuthentication)
     {
+        if (telemetryConfiguration is null)
+        {
+            throw new ArgumentNullException(nameof(telemetryConfiguration));
+        }
+
         _telemetryClient = new TelemetryClient(telemetryConfiguration);
-        _settings = settings;
-        _stickerSetRepository = stickerSetRepository;
-        _stickerSetIndexer = stickerSetIndexer;
-        _botFrameworkAuthentication = botFrameworkAuthentication;
+        _stickerSetRepository = stickerSetRepository ?? throw new ArgumentNullException(nameof(stickerSetRepository));
+        _stickerSetIndexer = stickerSetIndexer ?? throw new ArgumentNullException(nameof(stickerSetIndexer));
+        _botFrameworkAuthentication = botFrameworkAuthentication ?? throw new ArgumentNullException(nameof(botFrameworkAuthentication));
     }
 
     /// <summary>
@@ -67,6 +69,7 @@ public class MessagesHttpFunction
     /// </summary>
     /// <param name="req">The <see cref="HttpRequest"/>.</param>
     /// <param name="logger">The <see cref="ILogger"/>.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/></param>
     /// <returns>A <see cref="Task"/> that results in an <see cref="IActionResult"/> when awaited.</returns>
     [FunctionName("messages")]
     public async Task<IActionResult> Run(
@@ -84,11 +87,6 @@ public class MessagesHttpFunction
             if (req == null)
             {
                 throw new ArgumentNullException(nameof(req));
-            }
-
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
             }
 
             logger.LogInformation("Messages function received a request.");
@@ -136,7 +134,7 @@ public class MessagesHttpFunction
             if (activity.Value != null)
             {
                 var queryValue = JObject.FromObject(activity.Value).ToObject<ComposeExtensionValue>();
-                query = queryValue.GetParameterValue();
+                query = queryValue?.GetParameterValue() ?? string.Empty;
 
                 if (queryValue?.QueryOptions != null)
                 {
@@ -197,7 +195,8 @@ public class MessagesHttpFunction
         using (var jsonReader = new JsonTextReader(streamReader))
         {
             var activityJObject = await JObject.LoadAsync(jsonReader);
-            return activityJObject.ToObject<Activity>();
+            return activityJObject.ToObject<Activity>() ?? 
+                throw new InvalidOperationException($"{nameof(req)}.{nameof(req.Body)} cannot convert to Activity.");
         }
     }
 
@@ -211,7 +210,7 @@ public class MessagesHttpFunction
         var clientInfoEntity = activity.Entities?.Where(e => e.Type == "clientInfo")?.FirstOrDefault();
         var channelData = (JObject)activity.ChannelData;
 
-        var properties = new Dictionary<string, string>
+        var properties = new Dictionary<string, string?>
         {
             { "ActivityId", activity.Id },
             { "ActivityType", activity.Type },

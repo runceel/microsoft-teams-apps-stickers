@@ -41,7 +41,7 @@ namespace StickersTemplate.Tests
             new Sticker("sticker3", new Uri("http://localhost"), new string[] { "sticker3" } ),
         });
 
-        private MessagesHttpFunction function;
+        private MessagesHttpFunction function = null!;
         private Mock<IStickerSetIndexer> stickerSetIndexerMock;
 
         [TestMethod]
@@ -50,10 +50,9 @@ namespace StickersTemplate.Tests
         {
             // Setup
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext();
 
             // Action
-            var result = await this.function.Run(null, logger.Object, context);
+            var result = await this.function.Run(null, logger.Object, default);
         }
 
         [TestMethod]
@@ -62,22 +61,9 @@ namespace StickersTemplate.Tests
         {
             // Setup
             var request = new Mock<HttpRequest>();
-            var context = new ExecutionContext();
 
             // Action
-            var result = await this.function.Run(request.Object, null, context);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public async Task Run_NullExecutionContext()
-        {
-            // Setup
-            var request = new Mock<HttpRequest>();
-            var logger = new Mock<ILogger>();
-
-            // Action
-            var result = await this.function.Run(request.Object, logger.Object, null);
+            var result = await this.function.Run(request.Object, null, default);
         }
 
         [TestMethod]
@@ -87,13 +73,9 @@ namespace StickersTemplate.Tests
             var request = new Mock<HttpRequest>();
             request.Setup((r) => r.Headers).Returns<IHeaderDictionary>(null);
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -108,13 +90,9 @@ namespace StickersTemplate.Tests
             var headers = new Mock<IHeaderDictionary>();
             request.Setup((r) => r.Headers).Returns(headers.Object);
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -131,13 +109,9 @@ namespace StickersTemplate.Tests
             headers.Setup((h) => h.TryGetValue(It.Is<string>((s) => "Authorization".Equals(s)), out authHeaders)).Returns(true);
             request.Setup((r) => r.Headers).Returns(headers.Object);
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -155,13 +129,9 @@ namespace StickersTemplate.Tests
             headers.Setup((h) => h.TryGetValue(It.Is<string>((s) => "Authorization".Equals(s)), out authHeaders)).Returns(true);
             request.Setup((r) => r.Headers).Returns(headers.Object);
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -181,13 +151,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -212,13 +178,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -244,13 +206,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -293,13 +251,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -348,13 +302,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -390,13 +340,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -435,13 +381,9 @@ namespace StickersTemplate.Tests
             request.Setup((r) => r.Body).Returns(body);
 
             var logger = new Mock<ILogger>();
-            var context = new ExecutionContext
-            {
-                FunctionAppDirectory = "localhost"
-            };
 
             // Action
-            var result = await this.function.Run(request.Object, logger.Object, context);
+            var result = await this.function.Run(request.Object, logger.Object, default);
 
             // Validation
             Assert.IsNotNull(result);
@@ -476,10 +418,6 @@ namespace StickersTemplate.Tests
         {
             sequentialMutex.WaitOne(TimeSpan.FromSeconds(1));
 
-            var settings = new Mock<ISettings>();
-            settings.Setup((s) => s.ConfigUri).Returns(new Uri("http://localhost"));
-            settings.Setup((s) => s.MicrosoftAppId).Returns(Guid.NewGuid().ToString());
-
             var stickerSetRepository = new Mock<IStickerSetRepository>();
             stickerSetRepository.Setup((s) => s.FetchStickerSetAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(stickerSet);
@@ -489,10 +427,14 @@ namespace StickersTemplate.Tests
             stickerSetIndexerMock.Setup((s) => s.FindStickersByQuery(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((string query, int skip, int count, CancellationToken token) => stickerSet.Where(s => string.IsNullOrWhiteSpace(query) || s.Name.Equals(query)));
 
-            var credentialProvider = new Mock<ICredentialProvider>();
-            credentialProvider.Setup((c) => c.IsAuthenticationDisabledAsync()).ReturnsAsync(true);
-            var channelProvider = new Mock<IChannelProvider>();
-            //this.function = new MessagesHttpFunction(null, settings.Object, stickerSetRepository.Object, stickerSetIndexerMock.Object, credentialProvider.Object, channelProvider.Object);
+            var botFrameworkAuthenticationMock = new Mock<BotFrameworkAuthentication>();
+            botFrameworkAuthenticationMock.Setup(x => x.AuthenticateRequestAsync(It.IsAny<Activity>(), It.IsAny<string>(), default))
+                .ReturnsAsync(new AuthenticateRequestResult());
+
+            this.function = new MessagesHttpFunction(null, 
+                stickerSetRepository.Object, 
+                stickerSetIndexerMock.Object, 
+                botFrameworkAuthenticationMock.Object);
         }
 
         [TestCleanup]

@@ -17,12 +17,12 @@ namespace StickersTemplate.WebModels
         /// Gets or sets the name of the parameter.
         /// </summary>
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the parameter.
         /// </summary>
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 }

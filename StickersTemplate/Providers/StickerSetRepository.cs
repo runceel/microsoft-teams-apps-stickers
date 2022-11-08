@@ -63,7 +63,10 @@ namespace StickersTemplate.Providers
                     {
                         var responseContent = await response.Content.ReadAsStringAsync();
                         var stickerConfig = JsonConvert.DeserializeObject<StickerConfigDTO>(responseContent);
-                        var stickers = stickerConfig?.Images?.Select(image => new Sticker(image.Name, new Uri(image.ImageUri), image.Keywords)).ToArray();
+                    var stickers = stickerConfig?.
+                        Images?.
+                        Select(image => new Sticker(image.Name, new Uri(image.ImageUri), image.Keywords))
+                        .ToArray() ?? throw new InvalidOperationException($"{settings.ConfigUri} is invalid.");
                         return new StickerSet("Stickers", stickers);
                     }
                     catch (JsonException e)

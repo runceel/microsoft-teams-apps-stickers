@@ -118,251 +118,252 @@
         "sku": {
           "name": "PerGB2018"
         }
-      },
-      {
-        "type": "Microsoft.Storage/storageAccounts",
-        "name": "[variables('storageAccountName')]",
-        "apiVersion": "2018-02-01",
-        "location": "[parameters('location')]",
-        "kind": "Storage",
-        "sku": {
-          "name": "Standard_LRS"
-        }
-      },
-      {
-        "type": "Microsoft.Web/serverfarms",
-        "apiVersion": "2016-09-01",
-        "name": "[variables('hostingPlanName')]",
-        "location": "[parameters('location')]",
-        "properties": {
-          "name": "[variables('hostingPlanName')]",
-          "hostingEnvironment": "",
-          "numberOfWorkers": 1
-        },
-        "sku": {
-          "name": "[if(variables('isSharedPlan'), concat(variables('skuFamily'),'1'), concat(variables('skuFamily'),parameters('planSize')))]",
-          "tier": "[parameters('sku')]",
-          "size": "[concat(variables('skuFamily'), parameters('planSize'))]",
-          "family": "[variables('skuFamily')]",
-          "capacity": 0
-        }
-      },
-      {
-        "apiVersion": "2016-08-01",
-        "type": "Microsoft.Web/sites",
-        "name": "[variables('functionAppName')]",
-        "location": "[parameters('location')]",
-        "kind": "functionapp",
-        "properties": {
-          "name": "[variables('functionAppName')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-          "hostingEnvironment": "",
-          "clientAffinityEnabled": false,
-          "siteConfig": {
-            "alwaysOn": "[not(variables('isSharedPlan'))]",
-            "appSettings": [
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]"
-              },
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "~4"
-              },
-              {
-                "name": "FUNCTIONS_WORKER_RUNTIME",
-                "value": "dotnet"
-              },
-              {
-                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
-              },
-              {
-                "name": "WEBSITE_CONTENTSHARE",
-                "value": "[toLower(variables('functionAppName'))]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId('microsoft.insights/components/', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]"
-              },
-              {
-                "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                "value": "[reference(resourceId('microsoft.insights/components/', variables('functionAppInsightsName')), '2015-05-01').ConnectionString]"
-              },
-              {
-                "name": "MicrosoftAppId",
-                "value": "[parameters('messagingExtensionAppId')]"
-              },
-              {
-                "name": "ConfigUri",
-                "value": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2016-01-01').primaryEndpoints.blob, variables('stickersBlobContainerName'), '/stickers.json')]"
-              }
-            ]
-          }
-        },
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-        ],
-        "resources": [
-          {
-            "apiVersion": "2015-08-01",
-            "name": "web",
-            "type": "sourcecontrols",
-            "condition": "[not(empty(parameters('gitRepoUrl')))]",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-            ],
-            "properties": {
-              "RepoUrl": "[parameters('gitRepoUrl')]",
-              "branch": "[parameters('gitBranch')]",
-              "IsManualIntegration": true
-            }
-          }
-        ]
-      },
-      {
-        "apiVersion": "2020-02-02",
-        "name": "[variables('functionAppInsightsName')]",
-        "type": "microsoft.insights/components",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
-        ],
-        "tags": {
-          "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
-        },
-        "properties": {
-          "Application_Type": "web",
-          "Request_Source": "rest",
-          "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
-        }
-      },
-      {
-        "apiVersion": "2018-07-12",
-        "name": "[variables('botName')]",
-        "type": "Microsoft.BotService/botServices",
-        "location": "global",
-        "sku": {
-          "name": "F0"
-        },
-        "kind": "sdk",
-        "properties": {
-          "displayName": "[variables('botName')]",
-          "msaAppId": "[parameters('messagingExtensionAppId')]",
-          "endpoint": "[concat(variables('functionAppUrl'), '/api/messages')]",
-          "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]"
-        },
-        "resources": [
-          {
-            "name": "[concat(variables('botName'), '/MsTeamsChannel')]",
-            "type": "Microsoft.BotService/botServices/channels",
-            "apiVersion": "2018-07-12",
-            "location": "global",
-            "sku": {
-              "name": "F0"
-            },
-            "properties": {
-              "channelName": "MsTeamsChannel",
-              "location": "global",
-              "properties": {
-                "isEnabled": true
-              }
-            },
-            "dependsOn": [
-              "[concat('Microsoft.BotService/botServices/', variables('botName'))]"
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Microsoft.Web/sites",
-        "apiVersion": "2016-08-01",
-        "name": "[variables('configAppName')]",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
-        ],
-        "kind": "app",
-        "properties": {
-          "name": "[variables('configAppName')]",
-          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-          "enabled": true,
-          "reserved": false,
-          "scmSiteAlsoStopped": false,
-          "clientAffinityEnabled": true,
-          "clientCertEnabled": false,
-          "hostNamesDisabled": false,
-          "containerSize": 0,
-          "dailyMemoryTimeQuota": 0,
-          "httpsOnly": true,
-          "siteConfig": {
-            "alwaysOn": false,
-            "appSettings": [
-              {
-                "name": "StorageConnectionString",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId('microsoft.insights/components/', variables('configAppInsightsName')), '2015-05-01').InstrumentationKey]"
-              },
-              {
-                "name": "StickersBlobContainerName",
-                "value": "[variables('stickersBlobContainerName')]"
-              },
-              {
-                "name": "ida:ClientId",
-                "value": "[parameters('configAppClientId')]"
-              },
-              {
-                "name": "ida:TenantId",
-                "value": "[parameters('tenantId')]"
-              },
-              {
-                "name": "ida:PostLogoutRedirectUri",
-                "value": "[variables('configAppUrl')]"
-              },
-              {
-                "name": "ValidUpns",
-                "value": "[parameters('configAdminUPNList')]"
-              }
-            ]
-          }
-        },
-        "resources": [
-          {
-            "apiVersion": "2015-08-01",
-            "name": "web",
-            "type": "sourcecontrols",
-            "condition": "[not(empty(parameters('gitRepoUrl')))]",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', variables('configAppName'))]"
-            ],
-            "properties": {
-              "RepoUrl": "[parameters('gitRepoUrl')]",
-              "branch": "[parameters('gitBranch')]",
-              "IsManualIntegration": true
-            }
-          }
-        ]
-      },
-      {
-        "apiVersion": "2020-02-02",
-        "name": "[variables('configAppInsightsName')]",
-        "type": "microsoft.insights/components",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
-        ],
-        "tags": {
-          "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('configAppName'))]": "Resource"
-        },
-        "properties": {
-          "Application_Type": "web",
-          "Request_Source": "rest",
-          "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
-        }
       }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[parameters('location')]",
+      "kind": "Storage",
+      "sku": {
+        "name": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "name": "[variables('hostingPlanName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[variables('hostingPlanName')]",
+        "hostingEnvironment": "",
+        "numberOfWorkers": 1
+      },
+      "sku": {
+        "name": "[if(variables('isSharedPlan'), concat(variables('skuFamily'),'1'), concat(variables('skuFamily'),parameters('planSize')))]",
+        "tier": "[parameters('sku')]",
+        "size": "[concat(variables('skuFamily'), parameters('planSize'))]",
+        "family": "[variables('skuFamily')]",
+        "capacity": 0
+      }
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "properties": {
+        "name": "[variables('functionAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "hostingEnvironment": "",
+        "clientAffinityEnabled": false,
+        "siteConfig": {
+          "alwaysOn": "[not(variables('isSharedPlan'))]",
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~4"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('functionAppName'))]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('microsoft.insights/components/', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+              "value": "[reference(resourceId('microsoft.insights/components/', variables('functionAppInsightsName')), '2015-05-01').ConnectionString]"
+            },
+            {
+              "name": "MicrosoftAppId",
+              "value": "[parameters('messagingExtensionAppId')]"
+            },
+            {
+              "name": "ConfigUri",
+              "value": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2016-01-01').primaryEndpoints.blob, variables('stickersBlobContainerName'), '/stickers.json')]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "condition": "[not(empty(parameters('gitRepoUrl')))]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('gitRepoUrl')]",
+            "branch": "[parameters('gitBranch')]",
+            "IsManualIntegration": true
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2020-02-02",
+      "name": "[variables('functionAppInsightsName')]",
+      "type": "microsoft.insights/components",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
+      },
+      "properties": {
+        "Application_Type": "web",
+        "Request_Source": "rest",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+      }
+    },
+    {
+      "apiVersion": "2018-07-12",
+      "name": "[variables('botName')]",
+      "type": "Microsoft.BotService/botServices",
+      "location": "global",
+      "sku": {
+        "name": "F0"
+      },
+      "kind": "azurebot",
+      "properties": {
+        "displayName": "[variables('botName')]",
+        "msaAppId": "[parameters('messagingExtensionAppId')]",
+        "endpoint": "[concat(variables('functionAppUrl'), '/api/messages')]",
+        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]"
+      },
+      "resources": [
+        {
+          "name": "[concat(variables('botName'), '/MsTeamsChannel')]",
+          "type": "Microsoft.BotService/botServices/channels",
+          "apiVersion": "2018-07-12",
+          "location": "global",
+          "sku": {
+            "name": "F0"
+          },
+          "properties": {
+            "channelName": "MsTeamsChannel",
+            "location": "global",
+            "properties": {
+              "isEnabled": true
+            }
+          },
+          "dependsOn": [
+            "[concat('Microsoft.BotService/botServices/', variables('botName'))]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "name": "[variables('configAppName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+      ],
+      "kind": "app",
+      "properties": {
+        "name": "[variables('configAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "enabled": true,
+        "reserved": false,
+        "scmSiteAlsoStopped": false,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "httpsOnly": true,
+        "siteConfig": {
+          "alwaysOn": false,
+          "appSettings": [
+            {
+              "name": "StorageConnectionString",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('microsoft.insights/components/', variables('configAppInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "StickersBlobContainerName",
+              "value": "[variables('stickersBlobContainerName')]"
+            },
+            {
+              "name": "ida:ClientId",
+              "value": "[parameters('configAppClientId')]"
+            },
+            {
+              "name": "ida:TenantId",
+              "value": "[parameters('tenantId')]"
+            },
+            {
+              "name": "ida:PostLogoutRedirectUri",
+              "value": "[variables('configAppUrl')]"
+            },
+            {
+              "name": "ValidUpns",
+              "value": "[parameters('configAdminUPNList')]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "condition": "[not(empty(parameters('gitRepoUrl')))]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('configAppName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('gitRepoUrl')]",
+            "branch": "[parameters('gitBranch')]",
+            "IsManualIntegration": true
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2020-02-02",
+      "name": "[variables('configAppInsightsName')]",
+      "type": "microsoft.insights/components",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('configAppName'))]": "Resource"
+      },
+      "properties": {
+        "Application_Type": "web",
+        "Request_Source": "rest",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+      }
+    }
   ]
 }

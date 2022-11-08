@@ -99,8 +99,7 @@ public class MessagesHttpFunction
             {
                 var authorizationHeader = GetAuthorizationHeader(req);
                 activity = await ParseRequestBody(req);
-                var authResult = await _botFrameworkAuthentication.AuthenticateRequestAsync(activity, authorizationHeader, default);
-                logger.LogInformation($"authResult.Audience: {authResult.Audience}");
+                await _botFrameworkAuthentication.AuthenticateRequestAsync(activity, authorizationHeader, default);
             }
             catch (JsonReaderException e)
             {

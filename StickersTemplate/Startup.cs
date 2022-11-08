@@ -1,4 +1,6 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using StickersTemplate;
 using StickersTemplate.Config;
@@ -16,5 +18,6 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton<ISettings, ConfigurationSettings>();
         builder.Services.AddTransient<IStickerSetRepository, StickerSetRepository>();
         builder.Services.AddTransient<IStickerSetIndexer, StickerSetIndexer>();
+        builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
     }
 }

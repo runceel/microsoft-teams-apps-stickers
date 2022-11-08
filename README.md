@@ -51,4 +51,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Deploy
 
-[Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Frunceel%2Fmicrosoft-teams-apps-stickers%2Fmaster%2Fdeployment%2Fazuredeploy.json)
+[Deploy to Azure from this repository](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Frunceel%2Fmicrosoft-teams-apps-stickers%2Fmaster%2Fdeployment%2Fazuredeploy.json)

@@ -2,6 +2,7 @@
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using StickersTemplate;
 using StickersTemplate.Config;
 using StickersTemplate.Interfaces;
@@ -23,8 +24,14 @@ public class Startup : FunctionsStartup
     public override void Configure(IFunctionsHostBuilder builder)
     {
         builder.Services.AddSingleton<ISettings, ConfigurationSettings>();
-        builder.Services.AddTransient<IStickerSetRepository, StickerSetRepository>();
-        builder.Services.AddHttpClient<IStickerSetIndexer, StickerSetIndexer>();
+        builder.Services.AddHttpClient<IStickerSetRepository, StickerSetRepository>((client, provider) =>
+        {
+            return new StickerSetRepository(
+                provider.GetRequiredService<ILogger<StickerSetRepository>>(), 
+                provider.GetRequiredService<ISettings>(),
+                client);
+        });
+        builder.Services.AddTransient<IStickerSetIndexer, StickerSetIndexer>();
         builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
     }
 }

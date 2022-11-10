@@ -26,19 +26,19 @@ namespace StickersTemplate.Providers
 
         private readonly ILogger logger;
         private readonly ISettings settings;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StickerSetRepository"/> class.
         /// </summary>
         /// <param name="logger">The <see cref="ILogger"/>.</param>
         /// <param name="settings">The <see cref="ISettings"/>.</param>
-        /// <param name="httpClient">The <see cref="HttpClient"/></param>
-        public StickerSetRepository(ILogger<StickerSetRepository> logger, ISettings settings, HttpClient httpClient)
+        /// <param name="httpClientFactory">The <see cref="IHttpClientFactory"/></param>
+        public StickerSetRepository(ILogger<StickerSetRepository> logger, ISettings settings, IHttpClientFactory httpClientFactory)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
         /// <inheritdoc />
@@ -53,7 +53,7 @@ namespace StickersTemplate.Providers
                     return DefaultStickerSet;
                 }
 
-                var response = await _httpClient.GetAsync(configUri);
+                var response = await _httpClientFactory.CreateClient().GetAsync(configUri);
                 if (!response.IsSuccessStatusCode)
                 {
                     this.logger.LogError($"GET {configUri} returned {response.StatusCode}: {response.ReasonPhrase}; default sticker set will be used.");

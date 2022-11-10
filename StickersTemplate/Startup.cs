@@ -22,6 +22,7 @@ public class Startup : FunctionsStartup
     /// <param name="builder">The <see cref="IFunctionsHostBuilder"/></param>
     public override void Configure(IFunctionsHostBuilder builder)
     {
+        builder.Services.AddSingleton<ISettings, ConfigurationSettings>();
         builder.Services.AddTransient<IStickerSetRepository, StickerSetRepository>();
         builder.Services.AddHttpClient<IStickerSetIndexer, StickerSetIndexer>();
         builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();

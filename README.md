@@ -1,3 +1,10 @@
+# 注意
+
+このブランチはステッカー管理アプリのログイン処理から UPN のチェック処理を外したバージョンになります。  
+ログインユーザーを制限したい場合は Azure AD のアプリ登録のエンタープライズアプリケーションから特定ユーザーまたはセキュリティグループからのログインのみ許可するように構成してください。
+
+https://learn.microsoft.com/ja-jp/azure/active-directory/develop/howto-restrict-your-app-to-a-set-of-users
+
 # Custom Stickers App Template
 
 | [Documentation](https://github.com/OfficeDev/microsoft-teams-stickers-app/wiki) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-stickers-app/wiki/Deployment-guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-stickers-app/wiki/Solution-overview) |

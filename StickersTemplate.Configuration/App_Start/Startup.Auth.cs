@@ -38,11 +38,6 @@ namespace StickersTemplate.Configuration
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
-
-            var validUpns = ConfigurationManager.AppSettings["ValidUpns"]
-                ?.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                ?.Select(s => s.Trim())
-                ?? new string[0];
             app.UseOpenIdConnectAuthentication(
                 new OpenIdConnectAuthenticationOptions
                 {
@@ -51,29 +46,6 @@ namespace StickersTemplate.Configuration
                     PostLogoutRedirectUri = PostLogoutRedirectUri,
                     Notifications = new OpenIdConnectAuthenticationNotifications()
                     {
-                        SecurityTokenValidated = (context) =>
-                        {
-                            var upnClaim = context?.AuthenticationTicket?.Identity?.Claims?
-                                .FirstOrDefault(c => c.Type == ClaimTypes.Upn);
-                            var upnOrEmail = upnClaim?.Value;
-
-                            // Externally-authenticated users don't have the UPN claim by default. Instead they have email.
-                            if (upnOrEmail == null)
-                            {
-                                var emailClaim = context?.AuthenticationTicket?.Identity?.Claims?
-                                    .FirstOrDefault(c => c.Type == ClaimTypes.Email);
-                                upnOrEmail = emailClaim?.Value;
-                            }
-
-                            if (string.IsNullOrWhiteSpace(upnOrEmail)
-                                || !validUpns.Contains(upnOrEmail, StringComparer.OrdinalIgnoreCase))
-                            {
-                                context.OwinContext.Response.Redirect("/Account/InvalidUser?upn=" + Uri.EscapeDataString(upnOrEmail));
-                                context.HandleResponse(); // Suppress further processing
-                            }
-
-                            return Task.CompletedTask;
-                        },
                         RedirectToIdentityProvider = (context) =>
                         {
                             if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Authentication)
